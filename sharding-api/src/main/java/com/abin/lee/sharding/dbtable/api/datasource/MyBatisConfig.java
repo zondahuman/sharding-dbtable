@@ -1,5 +1,9 @@
 package com.abin.lee.sharding.dbtable.api.datasource;
 
+import com.abin.lee.sharding.dbtable.api.interceptor.TpsDeleteInterceptor;
+import com.abin.lee.sharding.dbtable.api.interceptor.TpsInsertInterceptor;
+import com.abin.lee.sharding.dbtable.api.interceptor.TpsUpdateInterceptor;
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -33,6 +37,7 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
         bean.setTypeAliasesPackage("com.abin.lee.sharding.dbtable.api.model");
+        bean.setPlugins(new Interceptor[]{sqlStatsInterceptor(),tpsDeleteInterceptor(), tpsInsertInterceptor(), tpsUpdateInterceptor()});
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
             bean.setMapperLocations(resolver.getResources("classpath:mybatis/mapper/*.xml"));
@@ -62,6 +67,33 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
         properties.setProperty("dialect", "mysql");
         sqlStatsInterceptor.setProperties(properties);
         return sqlStatsInterceptor;
+    }
+
+    @Bean
+    public TpsDeleteInterceptor tpsDeleteInterceptor(){
+        TpsDeleteInterceptor tpsDeleteInterceptor = new TpsDeleteInterceptor();
+        Properties properties = new Properties();
+        properties.setProperty("dialect", "mysql");
+        tpsDeleteInterceptor.setProperties(properties);
+        return tpsDeleteInterceptor;
+    }
+
+    @Bean
+    public TpsInsertInterceptor tpsInsertInterceptor(){
+        TpsInsertInterceptor tpsInsertInterceptor = new TpsInsertInterceptor();
+        Properties properties = new Properties();
+        properties.setProperty("dialect", "mysql");
+        tpsInsertInterceptor.setProperties(properties);
+        return tpsInsertInterceptor;
+    }
+
+    @Bean
+    public TpsUpdateInterceptor tpsUpdateInterceptor(){
+        TpsUpdateInterceptor tpsUpdateInterceptor = new TpsUpdateInterceptor();
+        Properties properties = new Properties();
+        properties.setProperty("dialect", "mysql");
+        tpsUpdateInterceptor.setProperties(properties);
+        return tpsUpdateInterceptor;
     }
 
 

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
 import javax.sql.DataSource;
+import java.util.Properties;
 
 /**
  * MyBatis基础配置
@@ -52,4 +53,16 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
     public PlatformTransactionManager annotationDrivenTransactionManager() {
         return new DataSourceTransactionManager(dataSource);
     }
+
+
+    @Bean
+    public SQLStatsInterceptor sqlStatsInterceptor(){
+        SQLStatsInterceptor sqlStatsInterceptor = new SQLStatsInterceptor();
+        Properties properties = new Properties();
+        properties.setProperty("dialect", "mysql");
+        sqlStatsInterceptor.setProperties(properties);
+        return sqlStatsInterceptor;
+    }
+
+
 }

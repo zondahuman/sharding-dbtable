@@ -19,9 +19,11 @@ public class ShardingExchange {
     Environment environment;
 
     public String shardingTableName(Long functionId) {
-        String gene = environment.getProperty("sharding.table.available");
-        Integer sequenceGene = Ints.tryParse(gene);
-        Long tableId = (functionId / sequenceGene) & (sequenceGene - 1);
+        String dbGene = environment.getProperty("sharding.database.available");
+        Integer dbGeneAvailable = Ints.tryParse(dbGene);
+        String tableGene = environment.getProperty("sharding.table.available");
+        Integer tableGeneAvailable = Ints.tryParse(tableGene);
+        Long tableId = (functionId / dbGeneAvailable) & (tableGeneAvailable - 1);
         String tableName = "order" + tableId;
         return tableName;
     }
